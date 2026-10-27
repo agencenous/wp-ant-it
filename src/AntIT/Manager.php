@@ -3,27 +3,38 @@ namespace AntIT;
 
 class Manager{
     /**
+	 * The prefix used for the database tables managed by this manager.
+	 * Will be added just after the wpdb->prefix when constructing the full table name.
+	 * This allows for multiple managers to share the same database with distinct table prefixes.
+	 * 
      * @var String
      */
 	public $prefix;
 
     /**
+	 * The name of the database table managed by this manager, without the prefix.
+	 * 
      * @var String
      */
 	public $table;
 
 	/**
+	 * The fully qualified class name of the model associated with this manager.
+	 * 
      * @var String
      */
 	public $model;
 
 	/**
 	 * SQL filepath or query associated with the manager
+	 * 
 	 * @var String
 	 */
 	public $sql;
     
     /**
+	 * The list of attributes managed by this manager, with short keys mapped to full attribute names.
+	 * 
      * @var array
     */
 	public $attributes = [
@@ -31,11 +42,15 @@ class Manager{
     ];
     
     /**
+	 * The fully qualified name of the database table, including the prefix.
+	 *
      * @var String
      */
     protected $table_name;
 
     /**
+	 * The cache for storing retrieved items to avoid redundant database queries.
+	 * 
      * @var array
      */
 	protected $cache = [];
@@ -69,15 +84,36 @@ class Manager{
         $this->table_name = $queen->sql_table($this->table, $this->sql);
 	}
 
-	public function parse_item($item, $key){
+	/**
+	 * Parse a database item into a model instance.
+	 * Child classes can override this method to customize how database items are parsed into model instances.
+	 *
+	 * @param object $item The database item to parse.
+	 * @param int $key The key/index of the item in the result set.
+	 * @return \AntIT\Model The parsed model instance.
+	 */
+	public function parse_item(mixed $item, mixed $key): \AntIT\Model {
 		return new $this->model((array)$item);
 	}
 
-	public function where_attr($key, $value){
+	/**
+	 * Generate a SQL WHERE clause for a specific attribute and value.
+	 *
+	 * @param string $key The attribute key.
+	 * @param mixed $value The attribute value.
+	 * @return string The SQL WHERE clause fragment.
+	 */
+	public function where_attr(string $key, string $value) : string{
 		return " AND {$this->table_name}.`{$key}`='{$value}'";
 	}
 
-	public function where($atts){
+	/**
+	 * Generate a SQL WHERE clause based on the provided attributes.
+	 *
+	 * @param array $atts The attributes to generate the WHERE clause for.
+	 * @return string The SQL WHERE clause.
+	 */
+	public function where(array $atts): string{
 		$where = " 1 ";
 		$atts=wp_parse_args(
 			$atts,
@@ -98,7 +134,13 @@ class Manager{
 		return $where;
 	}
 
-	public function get($atts){
+	/**
+	 * Retrieve items from the database based on the provided attributes.
+	 *
+	 * @param array $atts The attributes to filter the items by.
+	 * @return array The list of parsed model instances.
+	 */
+	public function get(array $atts): array{
 		$stat_name = 'get_'.md5(json_encode($atts));
 		if (isset($this->cache[$stat_name])) {
 			return $this->cache[$stat_name];
@@ -122,7 +164,13 @@ class Manager{
 		return $this->cache[$stat_name];
 	}
 
-	public function count($atts){
+	/**
+	 * Count the number of items in the database that match the provided attributes.
+	 *
+	 * @param array $atts The attributes to filter the items by.
+	 * @return int The count of matching items.
+	 */
+	public function count(array $atts): int{
 		$stat_name = 'count_'.md5(json_encode($atts));
 		if (isset($this->cache[$stat_name])) {
 			return $this->cache[$stat_name];
@@ -134,7 +182,12 @@ class Manager{
 		return $this->cache[$stat_name];
 	}
 
-    public function get_table_name(){
+	/**
+	 * Get the name of the database table associated with this manager.
+	 *
+	 * @return string The table name.
+	 */
+    public function get_table_name(): string{
         return $this->table_name;
     }
 }

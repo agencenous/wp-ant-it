@@ -5,9 +5,16 @@ namespace AntIT;
 class Model{
 	public $id;
 
-
 	public $_manager = null;
 
+	/**
+	 * Constructor for the Model class.
+	 * If a numeric value is provided, it will be treated as an ID and the corresponding record will be fetched from the manager.
+	 * If an array is provided, it will be used to populate the model's attributes.
+	 * If null is provided, the model will be initialized with default values and create a new item.
+	 * 
+	 * @param array|int|null $atts Attributes to populate the model with, or an ID to fetch from the manager.
+	 */
 	function __construct($atts=null){
 		$current_classname = get_class($this);
 		if($current_classname === 'AntIT\Model'){
@@ -37,6 +44,12 @@ class Model{
 		$this->populate();
 	}
 
+	/**
+	 * Fill the model with the provided attributes.
+	 *
+	 * @param array $atts Attributes to populate the model with.
+	 * @return $this
+	 */
 	function fill_with(array $atts){
 		foreach($this->_manager->attributes as $short=>$key){
 			$value = '';
@@ -51,10 +64,20 @@ class Model{
 		return $this;
 	}
 
+	/**
+	 * Populate the model with default values or perform any additional initialization.
+	 *
+	 * @return $this
+	 */
 	function populate(){
 		return $this;
 	}
 
+	/**
+	 * Save the current model to the database. If the model has an ID, it will perform an update; otherwise, it will insert a new record.
+	 *
+	 * @return int|false The ID of the saved model on success, or false on failure.
+	 */
 	function save(){
 		global $wpdb;
 		$datas = array();
@@ -89,6 +112,11 @@ class Model{
 		return false;
 	}
 
+	/**
+	 * Remove the current model from the database.
+	 *
+	 * @return bool True on success, false on failure.
+	 */
 	function remove(){
 		global $wpdb;
 		if(is_numeric($this->id)){
