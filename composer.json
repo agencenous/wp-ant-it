@@ -1,0 +1,34 @@
+{
+    "name": "agencenous/wp-ant-it",
+    "version": "0.0.2",
+    "description": "Manage an object oriented anthill in WordPress plugins.",
+    "type": "wordpress-package",
+    "license": "GPL-3.0-or-later",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Bastien Ho",
+            "email": "bastien@avecnous.eu"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/AntIT/Model.php",
+            "src/AntIT/Manager.php"
+        ]
+    },
+    "require-dev": {
+        "agencenous/bump-version": "dev-main"
+    },
+    "archive": {
+        "exclude": [
+            "/node_modules",
+            "node_modules/",
+            "package.json",
+            "package-lock.json",
+            ".babelrc",
+            ".npmignore",
+            "/src"
+        ]
+    }
+}
