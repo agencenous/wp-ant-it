@@ -12,7 +12,7 @@ composer require agencenous/wp-ant-it
 
 ## Configure
 
-The librairy comes with a **manager** and a **model** classes.
+The library comes with a **manager** and a **model** classes.
 
 Load the library
 
