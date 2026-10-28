@@ -51,12 +51,31 @@ add_filter( 'debug_information', function($info){
         'label' => __('Managed SQL File', 'ant-it'),
         'fields' => [],
     ];
+    global $wpdb;
     foreach($GLOBALS['ant_it_queens'] as $queen){
         foreach($queen->get_sql_files() as $file => $data){
             $info['ant_it_sql_files']['fields'][$file] = [
                 'label' => $data['tablename'] ?? basename($file),
-                'value' => esc_html($data['version']['current_version'] ?? 'N/A') . ' ('. esc_html($data['version']['available_version'] ?? 'N/A').')',
+                'value' => esc_html($data['version']['current_version'] ?? 'N/A'),
             ];
+            if(isset($data['version']['available_version']) && $data['version']['available_version'] !== $data['version']['current_version']){
+                $info['ant_it_sql_files']['fields'][$file]['value'] .= ' (update available: ' . esc_html($data['version']['available_version']) . ')';
+                try {
+                    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+                    dbdelta(file_get_contents($file));
+                    if(!empty($wpdb->last_error)){
+                        $info['ant_it_sql_files']['fields'][$file.'_error'] = [
+                            'label' => __('Error', 'ant-it'),
+                            'value' => $wpdb->last_error,
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    $info['ant_it_sql_files']['fields'][$file.'_error'] = [
+                            'label' => __('Error', 'ant-it'),
+                            'value' => $e->getMessage(),
+                        ];
+                }
+            }
         }
     }
     return $info;
