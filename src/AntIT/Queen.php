@@ -103,17 +103,17 @@ class Queen{
 
     public function display_notices()
     {
-        foreach ($this->notices as $file => $message) {
-            echo '<div class="notice notice-error"><strong>' . esc_html(basename($file)) . '</strong><p>' . esc_html($message) . '</p></div>';
+        if(current_user_can('manage_options')) {
+            foreach ($this->notices as $file => $message) {
+                echo '<div class="notice notice-error"><strong>' . esc_html(basename($file)) . '</strong><p>' . esc_html($message) . '</p></div>';
+            }
         }
     }
 
     public function __construct(string $prefix)
     {
         $this->prefix = $prefix;
-        if(current_user_can('manage_options')) {
-            add_action('admin_notices', [$this, 'display_notices']);
-        }
+        add_action('admin_notices', [$this, 'display_notices']);
     }
 
     public function sql_table(string $table, string $sql_file)
