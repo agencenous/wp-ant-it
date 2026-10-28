@@ -33,7 +33,7 @@ class Queen{
     {
         global $wpdb;
         $tablename = $wpdb->prefix . $this->prefix . $table;
-        $this->register_sql_file($sql_file);
+        $this->register_sql_file($sql_file, $tablename);
         return $tablename;
     }
 
@@ -44,12 +44,12 @@ class Queen{
      * @throws \Exception If the SQL file does not exist.
      * @return void
      */
-    public function register_sql_file(string $file)
+    public function register_sql_file(string $file, string $tablename)
     {
         if(!file_exists($file)) {
             Throw new \Exception("SQL file not found: " . $file);
         }
-        $this->sql_files[$file] = $this->check_sql($file);
+        $this->sql_files[$file] = $this->check_sql($file, $tablename);
     }
     
     /**
@@ -57,7 +57,7 @@ class Queen{
      *
      * @param string $file The name of the SQL file to check.
      */
-    public function check_sql(string $file)
+    public function check_sql(string $file, string $tablename)
     {
         global $wpdb;
         $sql_path = $file;
@@ -70,7 +70,15 @@ class Queen{
             $current_db_version = get_site_option($option);
             if ($current_db_version != $sql_infos['Version']) {
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                $sql_content = sprintf(file_get_contents($sql_path), $wpdb->prefix);
+                $sql_content = str_replace(
+                    [
+                        '%TABLE%',
+                    ],
+                    [
+                        $tablename,
+                    ],
+                    file_get_contents($sql_path)
+                );
                 dbDelta($sql_content);
                 update_site_option($option, $sql_infos['Version']);
                 return $sql_infos['Version'];

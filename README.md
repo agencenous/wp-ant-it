@@ -29,7 +29,7 @@ Some attributes have to be declared:
 
 - `$table` the final table name (without any prefix)
 - `$prefix` an additional prefix for multiple tables in the same plugin
-- `$sql` the SQL query starting by _"CREATE TABLE"_ or a path to an existing .sql file. `dbDelta()` will be used to manage upgrades
+- `$sql` the SQL query starting by _"CREATE TABLE"_ or a path to an existing .sql file. `dbDelta()` will be used to manage upgrades. Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
 - `$model` the classname of the related model
 - `$attributes` an associative array: shortname => column of each model's property
 
@@ -55,7 +55,38 @@ class NotificationsManager extends Manager {
     ];
 }
 ```
+
+## SQL instruction
+
+Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
+
+Increment the version on each change. The system will detect version change and trigger the upgrade.
+
+```sql
+-- /*
+-- Author: agencenous
+-- Version: 11
+-- */
+
+CREATE TABLE `%TABLE%` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `user_id` mediumint(10) NOT NULL DEFAULT '0',
+   `date` date NOT NULL DEFAULT '0000-00-00',
+   `email` varchar(255) NOT NULL DEFAULT '',
+   `subject` varchar(255) NOT NULL DEFAULT '',
+   `from_name` varchar(255) NOT NULL DEFAULT '',
+   `from_mail` varchar(255) NOT NULL DEFAULT '',
+   `message` text NOT NULL DEFAULT '',
+   `status` varchar(20) NOT NULL DEFAULT 'pending',
+   PRIMARY KEY (`id`),
+   INDEX  `DATE` (`date`),
+   INDEX  `USER` (`user_id`)
+);
+```
+
+
 ### The model
+
 like an entity in Symfony
 
 ```php
