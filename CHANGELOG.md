@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.0.6
+
+- Show upgrade errors in admin notices
+
 ## 0.0.5
 
 - Do not update table version if update fails
