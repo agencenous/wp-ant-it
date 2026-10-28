@@ -29,7 +29,7 @@ Some attributes have to be declared:
 
 - `$table` the final table name (without any prefix)
 - `$prefix` an additional prefix for multiple tables in the same plugin
-- `$sql` the SQL query starting by _"CREATE TABLE"_ or a path to an existing .sql file. `dbDelta()` will be used to manage upgrades. Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
+- `$sql` the path to an existing .sql file. `dbDelta()` will be used to manage upgrades. Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
 - `$model` the classname of the related model
 - `$attributes` an associative array: shortname => column of each model's property
 
@@ -56,7 +56,7 @@ class NotificationsManager extends Manager {
 }
 ```
 
-## SQL instruction
+## SQL file
 
 Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
 
