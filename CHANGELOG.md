@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.0.4
+
+- Explicit token for tablename replacement in SQL iinstructions
+
 ## 0.0.3
 
 - Comment methods

@@ -1,6 +1,6 @@
 {
     "name": "agencenous/wp-ant-it",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Manage an object oriented anthill in WordPress plugins.",
     "type": "wordpress-package",
     "license": "GPL-3.0-or-later",
