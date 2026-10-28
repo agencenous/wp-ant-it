@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.0.7
+
+- Fix permission check
+
 ## 0.0.6
 
 - Show upgrade errors in admin notices
