@@ -33,11 +33,11 @@ add_filter('site_status_tests', function($tests){
             ];
             foreach($sql_files as $file => $info){
                 if(isset($info['version']['available_version']) && $info['version']['available_version'] !== $info['version']['current_version']){
-                    $result['status'] = 'recommended';
-                    $result['badge']['color'] = 'yellow';
+                    $result['status'] = 'critical';
+                    $result['badge']['color'] = 'red';
                 }
             }
-            if($result['status'] == 'recommended'){
+            if($result['status'] == 'critical'){
                 $result['description'] = __('Some tables are not up to date.', 'ant-it') . $result['description'];
             }
             return $result;
