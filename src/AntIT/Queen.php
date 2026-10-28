@@ -10,6 +10,58 @@ function getQueen(string $prefix){
     return $GLOBALS['ant_it_queens'][$prefix];
 }
 
+// Register a new section in site-health in order to list managed SQL files and their versions
+add_filter('site_status_tests', function($tests){
+    $tests['direct']['ant_it_sql_files'] = [
+        'label' => __('Managed SQL Files', 'ant-it'),
+        'test' => function() {
+            $sql_files = [];
+            foreach($GLOBALS['ant_it_queens'] as $queen){
+                foreach($queen->get_sql_files() as $file => $info){
+                    $sql_files[$file] = $info;
+                }
+            }
+            $result = [
+                'label' => __('Managed SQL Files', 'ant-it'),
+                'status'=> 'good',
+                'badge' => [
+                    'label' => __('Features'),
+                    'color' => 'blue',
+                ],
+                'description' => __('All tables are up to date.', 'ant-it'),
+                'test' => 'ant_it_sql_files',
+            ];
+            foreach($sql_files as $file => $info){
+                if(isset($info['version']['available_version']) && $info['version']['available_version'] !== $info['version']['current_version']){
+                    $result['status'] = 'recommended';
+                    $result['badge']['color'] = 'yellow';
+                }
+            }
+            if($result['status'] == 'recommended'){
+                $result['description'] = __('Some tables are not up to date.', 'ant-it') . $result['description'];
+            }
+            return $result;
+        }
+    ];
+    return $tests;
+});
+
+add_filter( 'debug_information', function($info){
+    $info['ant_it_sql_files'] = [
+        'label' => __('Managed SQL File', 'ant-it'),
+        'fields' => [],
+    ];
+    foreach($GLOBALS['ant_it_queens'] as $queen){
+        foreach($queen->get_sql_files() as $file => $data){
+            $info['ant_it_sql_files']['fields'][$file] = [
+                'label' => $data['tablename'] ?? basename($file),
+                'value' => esc_html($data['version']['current_version'] ?? 'N/A') . ' ('. esc_html($data['version']['available_version'] ?? 'N/A').')',
+            ];
+        }
+    }
+    return $info;
+});
+
 class Queen{
 
     /**
@@ -49,7 +101,10 @@ class Queen{
         if(!file_exists($file)) {
             Throw new \Exception("SQL file not found: " . $file);
         }
-        $this->sql_files[$file] = $this->check_sql($file, $tablename);
+        $this->sql_files[$file] = [
+            'tablename' => $tablename,
+            'version' => $this->check_sql($file, $tablename)
+        ];
     }
     
     /**
@@ -64,10 +119,14 @@ class Queen{
         if(!file_exists($sql_path)) {
             Throw new \Exception("SQL file not found: " . $sql_path);
         }
-        $sql_infos = get_file_data($sql_path, array('Author' => '-- Author', 'Version' => '-- Version'));
         $option = $this->prefix .'sql_' . basename($sql_path);
+        $current_db_version = get_site_option($option);
+        $sql_infos = get_file_data($sql_path, array('Author' => '-- Author', 'Version' => '-- Version'));
+        $version_info = [
+            'current_version' => $current_db_version,
+            'available_version' => $sql_infos['Version'] ?? null,
+        ];
         if (!empty($sql_infos['Version'])) {
-            $current_db_version = get_site_option($option);
             if ($current_db_version != $sql_infos['Version']) {
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 $sql_content = str_replace(
@@ -81,11 +140,16 @@ class Queen{
                 );
                 dbDelta($sql_content);
                 update_site_option($option, $sql_infos['Version']);
+                $version_info['current_version'] = $sql_infos['Version'];
                 return $sql_infos['Version'];
             }
-            return $current_db_version;
         }
-        return null;
+        return $version_info;
+    }
+
+    public function get_sql_files(): array
+    {
+        return $this->sql_files;
     }
 }
 
