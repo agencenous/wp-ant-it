@@ -138,10 +138,22 @@ class Queen{
                     ],
                     file_get_contents($sql_path)
                 );
-                dbDelta($sql_content);
-                update_site_option($option, $sql_infos['Version']);
-                $version_info['current_version'] = $sql_infos['Version'];
-                return $sql_infos['Version'];
+                $executed_queries = dbDelta($sql_content);
+                foreach ($executed_queries as $query) {
+                    if(defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log("[AntIT] Executed query: " . $query);
+                    }
+                }
+                $wpdb->print_error();
+                if(!empty($wpdb->last_error)){
+                    if(defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log("[AntIT] SQL error: " . $wpdb->last_error);
+                    }
+                }
+                else{
+                    update_site_option($option, $sql_infos['Version']);
+                    $version_info['current_version'] = $sql_infos['Version'];
+                }
             }
         }
         return $version_info;
