@@ -26,7 +26,7 @@ class Manager{
 	public $model;
 
 	/**
-	 * SQL filepath or query associated with the manager
+	 * SQL filepath associated with the manager
 	 * 
 	 * @var String
 	 */
@@ -75,8 +75,8 @@ class Manager{
 		if(empty($this->sql)){
 			Throw new \Exception("SQL not set for Manager. Please set the SQL in the extending class {$current_classname}.");
 		}
-		if(!strstr($this->sql, 'CREATE TABLE') && !file_exists($this->sql)){
-			Throw new \Exception("SQL is nor a CREATE TABLE query nor a valid file path.");
+		if(!file_exists($this->sql)){
+			Throw new \Exception("SQL file not found: " . $this->sql);
 		}
 
         require_once __DIR__ . '/Queen.php';

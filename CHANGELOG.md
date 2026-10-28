@@ -2,7 +2,8 @@
 
 ## 0.0.4
 
-- Explicit token for tablename replacement in SQL iinstructions
+- Explicit token for tablename replacement in SQL instructions
+- Remove mentions about the ability to directly store SQL queries in variables
 
 ## 0.0.3
 
