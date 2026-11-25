@@ -40,6 +40,24 @@ class Manager{
 	public $attributes = [
         'i'=>'id',
     ];
+
+	/**
+	 * Array of upgrades, key is the version and value is a method of the manager that performs the upgrade.
+	 * @var array<string, callable>
+	 */
+	public $upgrades = [];
+
+	/**
+	 * The current version of the database schema managed by this manager.
+	 * @var String
+	 */
+	public $current_version;
+
+	/**
+	 * The available version of the database schema managed by this manager.
+	 * @var String
+	 */
+	public $available_version;
     
     /**
 	 * The fully qualified name of the database table, including the prefix.
@@ -89,6 +107,12 @@ class Manager{
         require_once __DIR__ . '/Queen.php';
         $this->queen = getQueen($this->prefix);
         $this->table_name = $this->queen->sql_table($this->table, $this->sql);
+		$info = $this->get_sql_info();
+		if($info){
+			$this->current_version = $info['current_version'] ?? null;
+			$this->available_version = $info['available_version'] ?? null;
+		}
+		$this->manage_upgrades();
 	}
 
 	/**
@@ -205,5 +229,56 @@ class Manager{
 	 */
 	public function get_queen(): \AntIT\Queen{
 		return $this->queen;
+	}
+
+	/**
+	 * Get the SQL file information for the current manager's SQL file.
+	 *
+	 * @return array|null The SQL file information, or null if not found.
+	 */
+	public function get_sql_info(): ?array{
+		$files = $this->queen->get_sql_files();
+		if(isset($files[$this->sql])){
+			return $files[$this->sql];
+		}
+		return null;
+	}
+
+	/**
+	 * Manage the upgrades for the current manager by applying any pending upgrade functions.
+	 * This method checks the current version against the available version and executes
+	 * the corresponding upgrade callbacks if necessary.
+	 */
+	private function manage_upgrades(): void{
+		global $wpdb;
+		foreach ($this->upgrades as $version => $upgrade) {
+			$option = $this->queen->get_prefix() .'sql_' . basename($this->sql).'_upgrade_' . $version;
+			$applied = get_site_option($option);
+			if($applied){
+				continue;
+			}
+			if(defined('WP_DEBUG') && WP_DEBUG) {
+				error_log("[AntIT] Upgrade detected in manager: {$this->table} for version: {$version}");
+			}
+			$callable = [$this, $upgrade];
+			if (method_exists($this, $upgrade)) {
+				try{
+					$result = call_user_func($callable);
+					if(defined('WP_DEBUG') && WP_DEBUG) {
+						error_log("[AntIT] Upgrade applied successfully in manager: {$this->table} for version: {$version}" . print_r($result, true));
+					}
+					update_site_option($option, date('Y-m-d H:i:s'));
+				}catch(\Exception $e){
+					if(defined('WP_DEBUG') && WP_DEBUG) {
+						error_log("[AntIT] Upgrade failed in manager: {$this->table} for version: {$version} with error: " . $e->getMessage());
+					}
+				}
+			}
+			else{
+				if(defined('WP_DEBUG') && WP_DEBUG) {
+					error_log("[AntIT] Upgrade function {$upgrade} is not callable in manager: {$this->table} for version: {$version}");
+				}
+			}
+		}
 	}
 }
