@@ -1,5 +1,10 @@
 # WP Ant IT changelog
 
+## 0.2.0
+
+- Allows to pass JOIN and custom WHERE params to get() method
+- Declare return type of Model methods
+
 ## 0.1.0
 
 - Add methods to retrieve SQL table prefix and process SQL file content
