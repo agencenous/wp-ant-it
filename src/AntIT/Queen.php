@@ -166,9 +166,13 @@ class Queen{
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 $sql_content = str_replace(
                     [
+                        '%WP_DB_NAME%',
+                        '%WP_DB_PREFIX%',
                         '%TABLE%',
                     ],
                     [
+                        $wpdb->dbname,
+                        $wpdb->prefix,
                         $tablename,
                     ],
                     file_get_contents($sql_path)
