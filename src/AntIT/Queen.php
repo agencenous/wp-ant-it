@@ -141,6 +141,48 @@ class Queen{
             'version' => $this->check_sql($file, $tablename)
         ];
     }
+
+    /**
+     * Get the prefix used for SQL tables managed by the Queen class.
+     * @return string The SQL table prefix.
+     */
+    public function get_prefix(bool $full = false): string{
+        if($full){
+            global $wpdb;
+            return $wpdb->prefix . $this->prefix;
+        }
+        return $this->prefix;
+    }
+
+    /**
+     * Retrieves the SQL content for the specified SQL file and table.
+     *
+     * @param string $sql_path The path to the SQL file.
+     * @param string $tablename The name of the table to replace in the SQL content.
+     * @return string The processed SQL content.
+     */
+    public function get_sql(string $sql_path, string $tablename)
+    {
+        if(!file_exists($sql_path)) {
+            Throw new \Exception("SQL file not found: " . $sql_path);
+        }
+        global $wpdb;
+        $raw_sql_content = file_get_contents($sql_path); 
+        $sql_content = str_replace(
+            [
+                '%WP_DB_NAME%',
+                '%WP_DB_PREFIX%',
+                '%TABLE%',
+            ],
+            [
+                $wpdb->dbname,
+                $wpdb->prefix,
+                $tablename,
+            ],
+            $raw_sql_content
+        );
+        return $sql_content;
+    }
     
     /**
      * Checks and applies the SQL file if its version has changed.
