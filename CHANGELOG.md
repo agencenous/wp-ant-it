@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.0.8
+
+- Add `%WP_DB_PREFIX%` and `%WP_DB_NAME%` placeholders
+
 ## 0.0.7
 
 - Fix permission check
