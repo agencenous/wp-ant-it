@@ -62,7 +62,8 @@ add_filter( 'debug_information', function($info){
                 $info['ant_it_sql_files']['fields'][$file]['value'] .= ' (update available: ' . esc_html($data['version']['available_version']) . ')';
                 try {
                     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                    dbdelta(file_get_contents($file));
+                    $sql_content = $queen->get_sql($file, $data['tablename'] ?? basename($file));
+                    dbdelta($sql_content);
                     if(!empty($wpdb->last_error)){
                         $info['ant_it_sql_files']['fields'][$file.'_error'] = [
                             'label' => __('Error', 'ant-it'),
@@ -206,23 +207,14 @@ class Queen{
         if (!empty($sql_infos['Version'])) {
             if ($current_db_version != $sql_infos['Version']) {
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                $sql_content = str_replace(
-                    [
-                        '%WP_DB_NAME%',
-                        '%WP_DB_PREFIX%',
-                        '%TABLE%',
-                    ],
-                    [
-                        $wpdb->dbname,
-                        $wpdb->prefix,
-                        $tablename,
-                    ],
-                    file_get_contents($sql_path)
-                );
+                $sql_content = $this->get_sql($sql_path, $tablename);
+                if(defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log("[AntIT] Execute query:\n" . $sql_content);
+                }
                 $executed_queries = dbDelta($sql_content);
                 foreach ($executed_queries as $query) {
                     if(defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log("[AntIT] Executed query: " . $query);
+                        error_log("[AntIT] Executed query:\n" . $query);
                     }
                 }
                 $wpdb->print_error();
