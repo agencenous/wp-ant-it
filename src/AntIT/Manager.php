@@ -177,14 +177,24 @@ class Manager{
 			return $this->cache[$stat_name];
 		}
 		global $wpdb;
-		$req = "SELECT * FROM `{$this->table_name}` WHERE ".$this->where($atts);
-		if(isset($atts['GROUP_BY'])){
+		$JOIN = '';
+		if(isset($atts['JOIN'])){
+			$JOIN = " JOIN ".$atts['JOIN'];
+		}
+		$req = "SELECT * FROM `{$this->table_name}` {$JOIN} WHERE ".$this->where($atts);
+		if(!empty($atts['WHERE'])){
+			if(is_array($atts['WHERE'])){
+				$atts['WHERE'] = implode(' AND ', $atts['WHERE']);
+			}
+			$req.=" AND ".$atts['WHERE'];
+		}
+		if(!empty($atts['GROUP_BY'])){
 			$req.=" GROUP BY ".$atts['GROUP_BY'];
 		}
-		if(isset($atts['ORDER_BY'])){
+		if(!empty($atts['ORDER_BY'])){
 			$req.=" ORDER BY ".$atts['ORDER_BY'];
 		}
-		if(isset($atts['LIMIT'])){
+		if(!empty($atts['LIMIT'])){
 			$req.=" LIMIT ".$atts['LIMIT'];
 		}
 		$results = $wpdb->get_results($req);
