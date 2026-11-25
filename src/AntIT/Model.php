@@ -50,7 +50,7 @@ class Model{
 	 * @param array $atts Attributes to populate the model with.
 	 * @return $this
 	 */
-	function fill_with(array $atts){
+	function fill_with(array $atts) : self {
 		foreach($this->_manager->attributes as $short=>$key){
 			$value = '';
 			if(isset($atts[$short])){
@@ -69,7 +69,7 @@ class Model{
 	 *
 	 * @return $this
 	 */
-	function populate(){
+	function populate() : self {
 		return $this;
 	}
 
@@ -78,7 +78,7 @@ class Model{
 	 *
 	 * @return int|false The ID of the saved model on success, or false on failure.
 	 */
-	function save(){
+	function save() : int|false {
 		global $wpdb;
 		$datas = array();
 
@@ -117,7 +117,7 @@ class Model{
 	 *
 	 * @return bool True on success, false on failure.
 	 */
-	function remove(){
+	function remove() : bool {
 		global $wpdb;
 		if(is_numeric($this->id)){
 			if(false !== $wpdb->delete( $this->_manager->get_table_name(), array('id'=>$this->id))){
