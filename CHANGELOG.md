@@ -1,5 +1,12 @@
 # WP Ant IT changelog
 
+## 0.1.0
+
+- Add methods to retrieve SQL table prefix and process SQL file content
+- Expose SQL schema version information through the manager
+- Add versioned, one-time manager upgrade callbacks
+
+
 ## 0.0.8
 
 - Add `%WP_DB_PREFIX%` and `%WP_DB_NAME%` placeholders

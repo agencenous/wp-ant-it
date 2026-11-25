@@ -59,6 +59,7 @@ class NotificationsManager extends Manager {
 ## SQL file
 
 Use _%TABLE%_ as table name, it will be replaced by the full tablename including prefix.
+The `%WP_DB_PREFIX%` and `%WP_DB_NAME%` placeholders are also replaced with the WordPress database prefix and database name.
 
 Increment the version on each change. The system will detect version change and trigger the upgrade.
 
@@ -83,6 +84,28 @@ CREATE TABLE `%TABLE%` (
    INDEX  `USER` (`user_id`)
 );
 ```
+
+### Manager upgrades
+
+Managers expose the current and available SQL schema versions as `$current_version` and `$available_version`. You can also retrieve the SQL file information with `get_sql_info()`.
+
+To run PHP migrations, declare an `$upgrades` array where each key is a migration version and each value is the name of a method on the manager. Each migration is recorded as applied for that manager prefix, SQL filename, and version, so it runs only once.
+
+```php
+class NotificationsManager extends Manager {
+    // Other manager properties...
+
+    public $upgrades = [
+        '2' => 'migrate_to_version_2',
+    ];
+
+    public function migrate_to_version_2() {
+        // Apply the migration for version 2.
+    }
+}
+```
+
+The manager also exposes its Queen instance through `get_queen()`. The Queen provides `get_prefix()` to retrieve its custom prefix, or `get_prefix(true)` to include the WordPress database prefix, and `get_sql($sql_path, $tablename)` to read SQL with its placeholders replaced.
 
 
 ### The model
