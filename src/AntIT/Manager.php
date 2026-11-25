@@ -55,6 +55,13 @@ class Manager{
      */
 	protected $cache = [];
 
+	/**
+	 * The Queen instance associated with this manager.
+	 * 
+	 * @var \AntIT\Queen
+	 */
+	private $queen;
+
 	public function __construct(){
 		$current_classname = get_class($this);
 		if($current_classname === 'AntIT\Manager'){
@@ -80,8 +87,8 @@ class Manager{
 		}
 
         require_once __DIR__ . '/Queen.php';
-        $queen = getQueen($this->prefix);
-        $this->table_name = $queen->sql_table($this->table, $this->sql);
+        $this->queen = getQueen($this->prefix);
+        $this->table_name = $this->queen->sql_table($this->table, $this->sql);
 	}
 
 	/**
@@ -190,4 +197,13 @@ class Manager{
     public function get_table_name(): string{
         return $this->table_name;
     }
+
+	/**
+	 * Get the Queen instance associated with this manager.
+	 *
+	 * @return \AntIT\Queen The Queen instance.
+	 */
+	public function get_queen(): \AntIT\Queen{
+		return $this->queen;
+	}
 }
