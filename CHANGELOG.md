@@ -2,7 +2,7 @@
 
 ## 0.3.2
 
-- Do not eraze data with `fill_with` if data is not provided
+- Do not erase data with `fill_with` if data is not provided
 
 ## 0.3.1
 
