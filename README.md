@@ -99,8 +99,16 @@ class NotificationsManager extends Manager {
         '2' => 'migrate_to_version_2',
     ];
 
+    /**
+     * Applies the migration to version 2
+     * Example: Adds a foreign key to wp_users table
+     */
     public function migrate_to_version_2() {
-        // Apply the migration for version 2.
+        $upgrader = $this->get_upgrader();
+		$prefix = $this->get_queen()->get_prefix(true);
+		// Add the foreign key for user_id
+		$upgrader->add("ALTER TABLE {$this->table_name} ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES {$wpdb->base_prefix}users(`ID`) ON DELETE SET NULL ON UPDATE CASCADE");
+		return $upgrader->execute();
     }
 }
 ```

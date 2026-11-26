@@ -2,6 +2,8 @@
 
 namespace AntIT;
 
+use AntIT\Upgrader;
+
 $GLOBALS['ant_it_queens'] = [];
 function getQueen(string $prefix){
     if(!isset($GLOBALS['ant_it_queens'][$prefix])){
@@ -102,6 +104,12 @@ class Queen{
      */
     private $notices = [];
 
+    /**
+     * The upgrader instance used to manage SQL upgrades.
+     * @var \AntIT\Upgrader
+     */
+    private $upgrader;
+
     public function display_notices()
     {
         if(current_user_can('manage_options')) {
@@ -115,6 +123,16 @@ class Queen{
     {
         $this->prefix = $prefix;
         add_action('admin_notices', [$this, 'display_notices']);
+        $this->upgrader = new \AntIT\Upgrader();
+    }
+
+    /**
+     * Gets the upgrader instance used by the Queen class.
+     *
+     * @return \AntIT\Upgrader The upgrader instance.
+     */
+    public function get_upgrader(): \AntIT\Upgrader {
+        return $this->upgrader;
     }
 
     public function sql_table(string $table, string $sql_file)

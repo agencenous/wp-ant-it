@@ -104,7 +104,6 @@ class Manager{
 			Throw new \Exception("SQL file not found: " . $this->sql);
 		}
 
-        require_once __DIR__ . '/Queen.php';
         $this->queen = getQueen($this->prefix);
         $this->table_name = $this->queen->sql_table($this->table, $this->sql);
 		$info = $this->get_sql_info();
@@ -240,6 +239,15 @@ class Manager{
 	public function get_queen(): \AntIT\Queen{
 		return $this->queen;
 	}
+
+    /**
+     * Gets the upgrader instance used by the Queen class.
+     *
+     * @return \AntIT\Upgrader The upgrader instance.
+     */
+    public function get_upgrader(): \AntIT\Upgrader {
+        return $this->get_queen()->get_upgrader();
+    }
 
 	/**
 	 * Get the SQL file information for the current manager's SQL file.

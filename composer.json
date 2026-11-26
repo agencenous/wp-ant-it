@@ -13,8 +13,10 @@
     ],
     "autoload": {
         "files": [
+            "src/AntIT/Manager.php",
             "src/AntIT/Model.php",
-            "src/AntIT/Manager.php"
+            "src/AntIT/Queen.php",
+            "src/AntIT/Upgrader.php"
         ]
     },
     "require-dev": {
