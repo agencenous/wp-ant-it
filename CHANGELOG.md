@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.3.4
+
+- Fix conditional logic in constructor to handle array attributes correctly
+
 ## 0.3.3
 
 - Use local blog option instead of site option for DB version storage
