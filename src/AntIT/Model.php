@@ -37,7 +37,7 @@ class Model{
 					$this->$key = $value;
 				}
 			}
-			else{
+			elseif(is_array($atts)){
 				$this->fill_with($atts);
 			}
 		}
