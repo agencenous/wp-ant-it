@@ -73,10 +73,11 @@ class Model{
 
 	/**
 	 * Save the current model to the database. If the model has an ID, it will perform an update; otherwise, it will insert a new record.
+	 * @param bool $force_insert Whether to force an insert even if the model has an ID.
 	 *
 	 * @return int|false The ID of the saved model on success, or false on failure.
 	 */
-	function save() : int|false {
+	function save(bool $force_insert=false) : int|false {
 		global $wpdb;
 		$datas = array();
 
@@ -92,7 +93,7 @@ class Model{
 			}
 		}
 
-		if(!empty($this->id) && is_numeric($this->id) && $this->id>0){
+		if(!$force_insert && !empty($this->id) && is_numeric($this->id) && $this->id>0){
 			if(false!==$wpdb->update( $this->_manager->get_table_name(), $datas, array('id'=>$this->id))){
 				return $this->id;
 			}
