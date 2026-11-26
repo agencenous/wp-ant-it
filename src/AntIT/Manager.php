@@ -271,7 +271,7 @@ class Manager{
 		global $wpdb;
 		foreach ($this->upgrades as $version => $upgrade) {
 			$option = $this->queen->get_prefix() .'sql_' . basename($this->sql).'_upgrade_' . $version;
-			$applied = get_site_option($option);
+			$applied = get_option($option);
 			if($applied){
 				continue;
 			}
@@ -285,7 +285,7 @@ class Manager{
 					if(defined('WP_DEBUG') && WP_DEBUG) {
 						error_log("[AntIT] Upgrade applied successfully in manager: {$this->table} for version: {$version}" . print_r($result, true));
 					}
-					update_site_option($option, date('Y-m-d H:i:s'));
+					update_option($option, date('Y-m-d H:i:s'));
 				}catch(\Exception $e){
 					if(defined('WP_DEBUG') && WP_DEBUG) {
 						error_log("[AntIT] Upgrade failed in manager: {$this->table} for version: {$version} with error: " . $e->getMessage());

@@ -216,7 +216,7 @@ class Queen{
             Throw new \Exception("SQL file not found: " . $sql_path);
         }
         $option = $this->prefix .'sql_' . basename($sql_path);
-        $current_db_version = get_site_option($option);
+        $current_db_version = get_option($option);
         $sql_infos = get_file_data($sql_path, array('Author' => '-- Author', 'Version' => '-- Version'));
         $version_info = [
             'current_version' => $current_db_version,
@@ -243,7 +243,7 @@ class Queen{
                     $this->notices[basename($sql_path). ' v'.$sql_infos['Version']] = $wpdb->last_error.' ('.$sql_path.')';
                 }
                 else{
-                    update_site_option($option, $sql_infos['Version']);
+                    update_option($option, $sql_infos['Version']);
                     $version_info['current_version'] = $sql_infos['Version'];
                 }
             }
