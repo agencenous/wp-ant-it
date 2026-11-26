@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.3.1
+
+- Fix type check in fill_with method to ensure value is a string before unserializing
+
 ## 0.3.0
 
 - Adds upgrade manager
