@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.4.0
+
+- Enhance save method to include force_insert parameter for better control over database operations
+
 ## 0.3.4
 
 - Fix conditional logic in constructor to handle array attributes correctly
