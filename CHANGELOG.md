@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.3.0
+
+- Adds upgrade manager
+
 ## 0.2.0
 
 - Allows to pass JOIN and custom WHERE params to get() method
