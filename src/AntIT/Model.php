@@ -52,14 +52,12 @@ class Model{
 	 */
 	function fill_with(array $atts) : self {
 		foreach($this->_manager->attributes as $short=>$key){
-			$value = '';
 			if(isset($atts[$short])){
-				$value = $atts[$short];
+				$this->$key = $atts[$short];
 			}
 			if(isset($atts[$key])){
-				$value = $atts[$key];
+				$this->$key = $atts[$key];
 			}
-			$this->$key = $value;
 		}
 		return $this;
 	}
