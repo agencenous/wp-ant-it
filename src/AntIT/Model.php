@@ -31,7 +31,7 @@ class Model{
 			if(is_array($reps) && isset($reps[0])){
 				// Populate
 				foreach($reps[0] as $key=>$value){
-					if(!empty($value) && substr($value, 0, 2) == 'a:'){
+					if(!empty($value) && is_string($value) && substr($value, 0, 2) == 'a:'){
 						$value=unserialize($value);
 					}
 					$this->$key = $value;
