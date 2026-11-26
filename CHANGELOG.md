@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.3.2
+
+- Do not eraze data with `fill_with` if data is not provided
+
 ## 0.3.1
 
 - Fix type check in fill_with method to ensure value is a string before unserializing
