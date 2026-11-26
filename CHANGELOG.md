@@ -1,5 +1,9 @@
 # WP Ant IT changelog
 
+## 0.3.3
+
+- Use local blog option instead of site option for DB version storage
+
 ## 0.3.2
 
 - Do not erase data with `fill_with` if data is not provided
